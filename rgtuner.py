@@ -156,14 +156,14 @@ def get_variables_and_params(robot_file):
         enemy_files.append(robot_file)
     return variables, enemy_files, opts
 
-def run_match(bot1, bot2):
+def run_match(bot1, bot2, seed):
     """Runs a match between two robot files."""
 
-    runner = Runner(player_files=(bot1,bot2), options=Options(quiet=4, game_seed=random.randint(0, default_settings.max_seed)))
+    runner = Runner(player_files=(bot1,bot2), options=Options(quiet=4, game_seed=seed))
     scores0, scores1 = runner.run()[0]
     return [scores0, scores1]
 
-def versus(bot1, bot2, num_matches, cpu_count):
+def versus(bot1, bot2, num_matches, cpu_count, seed_list):
     """Launches a multithreaded comparison between two robot files.
     run_match() is run in separate processes, one for each CPU core, until 100
     matches are run.
@@ -180,7 +180,7 @@ def versus(bot1, bot2, num_matches, cpu_count):
         bot1name = os.path.splitext(os.path.basename(bot1))[0]
         bot2name = os.path.splitext(os.path.basename(bot2))[0]
         start_time = time.time()
-        results = [pool.apply_async(run_match, (bot1, bot2))
+        results = [pool.apply_async(run_match, (bot1, bot2, seed_list[i]))
                    for i in range(num_matches)]
                    
         if show_match_results:
@@ -219,7 +219,7 @@ def versus(bot1, bot2, num_matches, cpu_count):
 
     return [W,L,D], tot_scores, all_scores
 
-def get_netavg (values, var_names, robot_file, enemy_files, num_matches, cpu_count):
+def get_netavg (values, var_names, robot_file, enemy_files, num_matches, cpu_count, seed_list):
     """Runs a robot_file against each enemy file for num_matches and returns
     the average difference in score"""
     total_matches = 0
@@ -229,7 +229,7 @@ def get_netavg (values, var_names, robot_file, enemy_files, num_matches, cpu_cou
     robot_to_eval = make_variant(variables, robot_file)
     
     for enemy in enemy_files:
-        wld, avg_scores, all_scores = versus(robot_to_eval, enemy, num_matches, cpu_count)
+        wld, avg_scores, all_scores = versus(robot_to_eval, enemy, num_matches, cpu_count, seed_list)
         total_matches += sum(wld)
         total_all_scores.extend(all_scores)
 
@@ -265,7 +265,9 @@ def optimize_variables(robot_file, cpu_count):
     value_list = variables.values()
     
     num_matches = int(opts['num_matches'])
-    args_ = (var_names, robot_file, enemy_files, num_matches, cpu_count)
+    random.seed()
+    seed_list = [random.randint(0, default_settings.max_seed) for x in xrange(num_matches)]
+    args_ = (var_names, robot_file, enemy_files, num_matches, cpu_count, seed_list)
 
     test_ranges = []
     for val in value_list:

@@ -6,7 +6,7 @@ Originally forked from https://github.com/Spferical/rgtuner
 
 rgtuner is a program to 'tune' bots for robotgame.org by modifying one variable at a time, throwing versions of a bot with different possible values for the variable against specified bots. rgtuner is not an optimizer in the usual definition. It runs a matrix of variants of the original file and scores each variant by average scoring margin. 
 
-Because of the variance present in Robot Game you'll need to run a decent number of matches (minimum 10, probably closer to 25) for each case to get a reasonable sample. Even with that many matches there is still significant variance in scoring margin. Depending on the options you choose, the tuner can take a VERY long time to run. It gives an indication of this as it's running.
+Because of the variance present in Robot Game you'll need to run a decent number of matches (minimum 10, probably closer to 25) for each case to get a reasonable sample. Even with that many matches there is still significant variance in scoring margin. Depending on the options you choose, the tuner can take a VERY long time to run. It gives an indication of this as it's running. Because of the variance, rgtuner won't do a good job of fine tuning for cases that are very similar to each other. It does use the same set of seeds for each case compared, so if you run the whole optimization twice you should get similar results.
 
 Included is an example bot, a version of Sfpar. 
 
