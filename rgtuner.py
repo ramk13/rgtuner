@@ -297,7 +297,7 @@ def optimize_variables(robot_file, cpu_count):
     # test_results.sort(key=lambda x: x.avg, reverse=True)
     test_results.sort(reverse=True)
     
-    print 'Final Results in %6.1fs at %s' % (time.time() - start_time, time.strftime("%H:%M:%S",time.localtime(time.time() - start_time)))
+    print 'Final Results in %6.1fs at %s' % (time.time() - start_time, time.strftime("%H:%M:%S",time.localtime(time.time())))
     print 'Best Result:'
     print test_results[0]
     print
